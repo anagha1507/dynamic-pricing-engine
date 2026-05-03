@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Pricing Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+        .result-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+        .result-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .price {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .recommended {
+            border: 3px solid #4CAF50;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Dynamic Pricing Engine</h1>
+        <p class="subtitle">AI-Powered Price Optimization for E-Commerce</p>
+        
+        <form id="pricingForm">
+            <div class="row">
+                <div class="form-group">
+                    <label>Product Category</label>
+                    <select id="product_category" required>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Home & Garden">Home & Garden</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Books">Books</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Customer Segment</label>
+                    <select id="customer_segment" required>
+                        <option value="Budget">Budget</option>
+                        <option value="Mid-range" selected>Mid-range</option>
+                        <option value="Premium">Premium</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label>Base Price ($)</label>
+                    <input type="number" id="base_price" value="100" min="1" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Competitor Price ($)</label>
+                    <input type="number" id="competitor_price" value="95" min="1" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label>Current Demand (units)</label>
+                    <input type="number" id="demand" value="50" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Inventory Level</label>
+                    <input type="number" id="inventory_level" value="200" min="0" required>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label>Promotion Type</label>
+                    <select id="promotion_type">
+                        <option value="None">None</option>
+                        <option value="Percentage">Percentage Off</option>
+                        <option value="Fixed">Fixed Amount Off</option>
+                        <option value="BOGO">Buy One Get One</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Season</label>
+                    <select id="season">
+                        <option value="Spring">Spring</option>
+                        <option value="Summer">Summer</option>
+                        <option value="Fall">Fall</option>
+                        <option value="Winter">Winter</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit">🚀 Get Optimal Price</button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>AI models analyzing your data...</p>
+        </div>
+        
+        <div class="results" id="results">
+            <h2 style="text-align:center; margin-bottom:20px;">📊 Price Predictions</h2>
+            <div id="predictionsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('pricingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            // Gather form data
+            const data = {
+                product_category: document.getElementById('product_category').value,
+                customer_segment: document.getElementById('customer_segment').value,
+                base_price: document.getElementById('base_price').value,
+                competitor_price: document.getElementById('competitor_price').value,
+                demand: document.getElementById('demand').value,
+                inventory_level: document.getElementById('inventory_level').value,
+                promotion_type: document.getElementById('promotion_type').value,
+                season: document.getElementById('season').value
+            };
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                if (result.success) {
+                    displayResults(result.predictions);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                alert('Error connecting to server: ' + error.message);
+            }
+        });
+        
+        function displayResults(predictions) {
+            const container = document.getElementById('predictionsContainer');
+            container.innerHTML = '';
+            
+            // Display each prediction
+            for (const [model, price] of Object.entries(predictions)) {
+                const card = document.createElement('div');
+                card.className = 'result-card';
+                
+                if (model === 'Recommended Price' || model === 'Ensemble') {
+                    card.classList.add('recommended');
+                }
+                
+                card.innerHTML = `
+                    <h3>${model}</h3>
+                    <p class="price">$${price}</p>
+                `;
+                
+                container.appendChild(card);
+            }
+            
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Model files (large files - optional, you can keep them)
+*.pkl
+*.h5
+*.pth
+*.zip
+
+# Data files
+data/raw/*.csv
+data/processed/*.csv
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tensorboard logs
+models/rl_logs/
+
+# Python
+*.pyc
+*.pyo

@@ -1,0 +1,46 @@
+project:
+  name: "Dynamic Pricing Engine"
+  version: "1.0.0"
+
+data:
+  raw_path: "data/raw/dynamic_pricing_data.csv"
+  processed_path: "data/processed/"
+  
+features:
+  numerical:
+    - "price"
+    - "competitor_price"
+    - "demand"
+    - "inventory_level"
+    - "day_of_week"
+    - "hour_of_day"
+    - "customer_rating"
+    - "shipping_time"
+  categorical:
+    - "product_category"
+    - "season"
+    - "promotion_type"
+    - "customer_segment"
+
+models:
+  random_forest:
+    n_estimators: 200
+    max_depth: 15
+    min_samples_split: 5
+    random_state: 42
+    
+  xgboost:
+    n_estimators: 300
+    max_depth: 10
+    learning_rate: 0.05
+    subsample: 0.8
+    
+  reinforcement_learning:
+    algorithm: "PPO"
+    learning_rate: 0.0003
+    n_steps: 2048
+    batch_size: 64
+    
+  time_series:
+    forecast_horizon: 24  # hours
+    seasonality_period: 24  # daily pattern
