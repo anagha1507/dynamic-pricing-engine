@@ -3,216 +3,373 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Pricing Engine</title>
+    <title>Smart Price Optimizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0f1a;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
+
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: 600;
-        }
-        input, select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            max-width: 680px;
+            background: #1a1a2e;
+            border-radius: 28px;
+            padding: 44px 36px;
+            border: 1px solid #2a2a3e;
         }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
+
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
         }
-        .row {
+
+        .header-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
-        button {
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        input, select {
+            padding: 14px 16px;
+            background: #16162b;
+            border: 1.5px solid #2a2a3e;
+            border-radius: 14px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            transition: all 0.2s ease;
+            outline: none;
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        input:focus, select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        select option { background: #1a1a2e; color: #fff; }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            margin-top: 8px;
         }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+
+        .btn:hover {
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            transform: translateY(-1px);
         }
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .results {
-            margin-top: 30px;
+
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* RESULTS */
+        .results-section {
             display: none;
+            margin-top: 32px;
+            animation: slideUp 0.5s ease;
         }
-        .result-card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .result-card h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .price {
-            font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
-        }
-        .recommended {
-            border: 3px solid #4CAF50;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-        }
-        .loading {
+
+        /* Big recommended price */
+        .big-price-box {
+            background: linear-gradient(135deg, #1e1b4b, #312e81, #3730a3);
+            border: 2px solid #6366f1;
+            border-radius: 20px;
+            padding: 28px 24px;
             text-align: center;
-            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .big-price-box .label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #a5b4fc;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
+        }
+
+        .big-price-box .price {
+            font-size: 48px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -2px;
+        }
+
+        .big-price-box .price .currency {
+            font-size: 28px;
+            font-weight: 500;
+            color: #c7d2fe;
+            margin-right: 2px;
+        }
+
+        /* Three cards in one row */
+        .three-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .mini-card {
+            background: #16162b;
+            border: 1px solid #2a2a3e;
+            border-radius: 14px;
+            padding: 16px 10px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .mini-card:hover {
+            border-color: #374151;
+            background: #1a1a35;
+        }
+
+        .mini-card .card-icon {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .mini-card .card-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .mini-card .card-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e5e7eb;
+        }
+
+        .loading-overlay {
             display: none;
+            text-align: center;
+            padding: 24px 0;
         }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+
+        .dot-spinner {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .dot-spinner span {
+            width: 10px;
+            height: 10px;
+            background: #6366f1;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+            animation: bounce 1.4s infinite ease-in-out;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .dot-spinner span:nth-child(2) { animation-delay: 0.2s; }
+        .dot-spinner span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 24px 18px; border-radius: 20px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .three-cards { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+            h1 { font-size: 24px; }
+            .big-price-box .price { font-size: 36px; }
+            .mini-card .card-value { font-size: 15px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎯 Dynamic Pricing Engine</h1>
-        <p class="subtitle">AI-Powered Price Optimization for E-Commerce</p>
-        
+        <div class="header">
+            <div class="header-badge">✨ AI Powered</div>
+            <h1>Smart Price Optimizer</h1>
+            <p class="subtitle">Find the perfect price for maximum profit</p>
+        </div>
+
         <form id="pricingForm">
-            <div class="row">
+            <div class="form-grid">
                 <div class="form-group">
-                    <label>Product Category</label>
+                    <label>Category</label>
                     <select id="product_category" required>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Clothing">Clothing</option>
-                        <option value="Home & Garden">Home & Garden</option>
-                        <option value="Sports">Sports</option>
-                        <option value="Books">Books</option>
+                        <option value="Electronics">📱 Electronics</option>
+                        <option value="Clothing">👕 Clothing</option>
+                        <option value="Home & Garden">🏠 Home & Garden</option>
+                        <option value="Sports">⚽ Sports</option>
+                        <option value="Books">📚 Books</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Customer Segment</label>
+                    <label>Customer</label>
                     <select id="customer_segment" required>
-                        <option value="Budget">Budget</option>
-                        <option value="Mid-range" selected>Mid-range</option>
-                        <option value="Premium">Premium</option>
+                        <option value="Budget">💰 Budget</option>
+                        <option value="Mid-range" selected>👤 Regular</option>
+                        <option value="Premium">👑 Premium</option>
                     </select>
                 </div>
-            </div>
-            
-            <div class="row">
                 <div class="form-group">
-                    <label>Base Price ($)</label>
-                    <input type="number" id="base_price" value="100" min="1" step="0.01" required>
+                    <label>Your Price (₹)</label>
+                    <input type="number" id="base_price" value="1000" min="1" required>
                 </div>
                 <div class="form-group">
-                    <label>Competitor Price ($)</label>
-                    <input type="number" id="competitor_price" value="95" min="1" step="0.01" required>
+                    <label>Market Price (₹)</label>
+                    <input type="number" id="competitor_price" value="950" min="1" required>
                 </div>
-            </div>
-            
-            <div class="row">
                 <div class="form-group">
-                    <label>Current Demand (units)</label>
+                    <label>Daily Demand</label>
                     <input type="number" id="demand" value="50" min="0" required>
                 </div>
                 <div class="form-group">
-                    <label>Inventory Level</label>
+                    <label>In Stock</label>
                     <input type="number" id="inventory_level" value="200" min="0" required>
                 </div>
-            </div>
-            
-            <div class="row">
                 <div class="form-group">
-                    <label>Promotion Type</label>
+                    <label>Offer</label>
                     <select id="promotion_type">
-                        <option value="None">None</option>
-                        <option value="Percentage">Percentage Off</option>
-                        <option value="Fixed">Fixed Amount Off</option>
-                        <option value="BOGO">Buy One Get One</option>
+                        <option value="None">No Offer</option>
+                        <option value="Percentage">% Discount</option>
+                        <option value="Fixed">Flat ₹ Off</option>
+                        <option value="BOGO">Buy 1 Get 1</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Season</label>
                     <select id="season">
-                        <option value="Spring">Spring</option>
-                        <option value="Summer">Summer</option>
-                        <option value="Fall">Fall</option>
-                        <option value="Winter">Winter</option>
+                        <option value="Summer">☀️ Summer</option>
+                        <option value="Monsoon">🌧️ Monsoon</option>
+                        <option value="Festival">🪔 Festival</option>
+                        <option value="Winter">❄️ Winter</option>
                     </select>
                 </div>
             </div>
-            
-            <button type="submit">🚀 Get Optimal Price</button>
+            <button type="submit" class="btn" id="submitBtn">Calculate Optimal Price</button>
         </form>
-        
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>AI models analyzing your data...</p>
+
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="dot-spinner">
+                <span></span><span></span><span></span>
+            </div>
         </div>
-        
-        <div class="results" id="results">
-            <h2 style="text-align:center; margin-bottom:20px;">📊 Price Predictions</h2>
-            <div id="predictionsContainer"></div>
+
+        <div class="results-section" id="resultsSection">
+            <!-- Big Price -->
+            <div class="big-price-box">
+                <div class="label">🎯 Recommended Price</div>
+                <div class="price"><span class="currency">₹</span><span id="heroPrice">--</span></div>
+            </div>
+
+            <!-- Three cards in one row -->
+            <div class="three-cards">
+                <div class="mini-card">
+                    <div class="card-icon">🌲</div>
+                    <div class="card-label">Random Forest</div>
+                    <div class="card-value" id="rfPrice">--</div>
+                </div>
+                <div class="mini-card">
+                    <div class="card-icon">⚡</div>
+                    <div class="card-label">XGBoost</div>
+                    <div class="card-value" id="xgbPrice">--</div>
+                </div>
+                <div class="mini-card">
+                    <div class="card-icon">🔗</div>
+                    <div class="card-label">Ensemble</div>
+                    <div class="card-value" id="ensPrice">--</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('pricingForm').addEventListener('submit', async (e) => {
+        const form = document.getElementById('pricingForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const resultsSection = document.getElementById('resultsSection');
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Show loading
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('results').style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Analyzing...';
+            loadingOverlay.style.display = 'block';
+            resultsSection.style.display = 'none';
             
-            // Gather form data
             const data = {
                 product_category: document.getElementById('product_category').value,
                 customer_segment: document.getElementById('customer_segment').value,
@@ -227,51 +384,56 @@
             try {
                 const response = await fetch('/predict', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
                 
                 const result = await response.json();
                 
-                // Hide loading
-                document.getElementById('loading').style.display = 'none';
+                loadingOverlay.style.display = 'none';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Calculate Optimal Price';
                 
                 if (result.success) {
-                    displayResults(result.predictions);
+                    showResults(result.predictions);
                 } else {
-                    alert('Error: ' + result.error);
+                    alert('Error: ' + (result.error || 'Something went wrong'));
                 }
             } catch (error) {
-                document.getElementById('loading').style.display = 'none';
-                alert('Error connecting to server: ' + error.message);
+                loadingOverlay.style.display = 'none';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Calculate Optimal Price';
+                alert('Cannot connect to server. Run: python website/app.py');
             }
         });
         
-        function displayResults(predictions) {
-            const container = document.getElementById('predictionsContainer');
-            container.innerHTML = '';
+        function showResults(predictions) {
+            let recommended = 0, rf = 0, xgb = 0, ens = 0;
             
-            // Display each prediction
             for (const [model, price] of Object.entries(predictions)) {
-                const card = document.createElement('div');
-                card.className = 'result-card';
+                if (model.startsWith('_')) continue;
                 
-                if (model === 'Recommended Price' || model === 'Ensemble') {
-                    card.classList.add('recommended');
+                if (model.includes('RECOMMENDED') || model.includes('✅')) {
+                    recommended = price;
+                } else if (model.includes('Random Forest') || model.includes('🌲')) {
+                    rf = price;
+                } else if (model.includes('XGBoost') || model.includes('⚡')) {
+                    xgb = price;
+                } else if (model.includes('Ensemble') || model.includes('🔗')) {
+                    ens = price;
                 }
-                
-                card.innerHTML = `
-                    <h3>${model}</h3>
-                    <p class="price">$${price}</p>
-                `;
-                
-                container.appendChild(card);
             }
             
-            document.getElementById('results').style.display = 'block';
-            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            // If no recommended found, use ensemble
+            if (recommended === 0) recommended = ens || rf || xgb || 0;
+            
+            document.getElementById('heroPrice').textContent = Number(recommended).toLocaleString('en-IN');
+            document.getElementById('rfPrice').textContent = '₹' + Number(rf).toLocaleString('en-IN');
+            document.getElementById('xgbPrice').textContent = '₹' + Number(xgb).toLocaleString('en-IN');
+            document.getElementById('ensPrice').textContent = '₹' + Number(ens).toLocaleString('en-IN');
+            
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     </script>
 </body>
